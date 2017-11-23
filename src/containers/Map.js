@@ -1,60 +1,27 @@
 import React from 'react'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import Highcharts from 'highcharts/highmaps'
 import WorldMap from '../static/map'
 import styles from './map.scss'
 import { amber, grey, orange, deepOrange, lightGreen } from 'material-ui/colors'
 
+// import actions
+import * as actions from '../actions'
+
 Highcharts.maps["custom/world-highres"] = WorldMap
 Highcharts.theme = {
-  title: {
-    style: {
-      color: grey[900]
-    }
-  },
-  itemStyle: {
-    color: grey[900]
-  },
-  itemHoverStyle:{
-    color: grey[900]
-  },
-	colorAxis: {
-		maxColor: lightGreen[100],
-		minColor: lightGreen[700]
-	},
-	plotOptions: {
-		map: {
-      nullColor: orange[500],
-      lineColor: '#f00'
-		}
-  },
-  labels: {
+	colors: ['#f45b5b', '#8085e9', '#8d4654', '#7798BF', '#aaeeee',
+		'#ff0066', '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
+	chart: {
+		backgroundColor: null,
 		style: {
-			color: grey[900]
+			fontFamily: 'Roboto, serif'
 		}
-  },
-  xAxis: {
-    lineColor: '#d8efe3',
-    labels: {
-        formatter: function() {
-            return this.value; // clean, unformatted number for year
-        }
-    }
-},
-yAxis: {
-    labels: {
-         style: {
-             color: 'orange'
-         },
-         formatter: function() {
-            return this.value / 1000 +'k';
-         }
-    },
-    lineColor: '#d8efe3',
-    gridLineColor: '#d8efe3',
-    title: {
-        text: null
-    }
-}
+	},
+	tooltip: {
+		borderWidth: 0
+	}
 };
 
 // Apply the theme
@@ -277,6 +244,12 @@ const data = [
 ]
 
 class Map extends React.Component {
+  componentWillMount () {
+    const { actions } = this.props
+    
+    actions.getData()
+  }
+
   componentDidMount () {
     Highcharts.mapChart(this.ref, {
       chart: {
@@ -284,10 +257,10 @@ class Map extends React.Component {
         backgroundColor: null
       },
       title: {
-        text: 'World Map'
+        text: null
       },
       mapNavigation: {
-        enabled: true,
+        enabled: false,
         buttonOptions: {
           verticalAlign: 'bottom'
         }
@@ -295,16 +268,19 @@ class Map extends React.Component {
       colorAxis: {
         min: 0
       },
+      legend: {
+        enabled: false
+      },
       series: [{
         data: data,
-        name: 'Random data',
+        name: 'Avarage Wage',
         states: {
           hover: {
-            color: '#BADA55'
+            color: amber[100]
           }
         },
         dataLabels: {
-          enabled: true,
+          enabled: false,
           format: '{point.name}'
         }
       }]
@@ -318,4 +294,16 @@ class Map extends React.Component {
   }
 }
 
-export default Map
+const mapStateToProps = state => {
+  return {
+    ...state
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    actions: bindActionCreators(actions, dispatch)
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Map)

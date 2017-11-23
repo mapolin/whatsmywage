@@ -5,6 +5,7 @@ import { createStore, combineReducers, applyMiddleware } from 'redux'
 import { Provider } from 'react-redux'
 import createHistory from 'history/createBrowserHistory'
 import { Route } from 'react-router'
+import thunk from 'redux-thunk';
 import { ConnectedRouter, routerReducer, routerMiddleware, push } from 'react-router-redux'
 import reducers from './reducers'
 
@@ -12,6 +13,7 @@ import reducers from './reducers'
 import Background from './components/Background'
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles'
 import { amber, orange, deepOrange } from 'material-ui/colors'
+import './static/global.scss'
 
 // setup theme
 const theme = createMuiTheme({
@@ -39,7 +41,8 @@ const store = createStore(
     ...reducers,
     router: routerReducer
   }),
-  applyMiddleware(middleware)
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+  applyMiddleware(middleware, thunk)
 )
 
 ReactDOM.render(

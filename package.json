@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "neutrino start"
+    "start": "neutrino start",
+    "server": "nodemon app.js"
   },
   "author": "Martin Atzinov",
   "license": "ISC",
@@ -14,18 +15,30 @@
   },
   "dependencies": {
     "autosuggest-highlight": "^3.1.1",
+    "bluebird": "^3.5.1",
+    "body-parser": "~1.18.2",
+    "classnames": "^2.2.5",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "express": "~4.15.5",
     "highcharts": "^6.0.3",
     "history": "^4.7.2",
+    "jade": "~1.11.0",
     "material-ui": "^1.0.0-beta.21",
-    "material-ui-next": "npm:material-ui@next",
+    "mongoose": "^4.13.4",
+    "morgan": "~1.9.0",
     "neutrino-middleware-sass": "0.0.1",
     "neutrino-middleware-style-loader": "^7.3.3",
+    "nodemon": "^1.12.1",
     "react": "^16.1.1",
     "react-autosuggest": "^9.3.2",
     "react-dom": "^16.1.1",
     "react-redux": "^5.0.6",
     "react-router-redux": "^5.0.0-alpha.8",
     "react-tap-event-plugin": "^3.0.2",
-    "redux": "^3.7.2"
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.2.0",
+    "serve-favicon": "~2.4.5",
+    "typeface-roboto": "0.0.45"
   }
 }

@@ -36,11 +36,12 @@ const style = theme => ({
 });
 
 function renderInput(inputProps) {
-  const { classes, autoFocus, value, ref, ...other } = inputProps
+  const { classes, autoFocus, value, ref, label, ...other } = inputProps
 
   return (
     <TextField
       fullWidth
+      label={label}
       autoFocus={autoFocus}
       value={value}
       inputRef={ref}
@@ -154,12 +155,13 @@ class Login extends React.Component {
             renderSuggestion={renderSuggestion}
             inputProps={{
               autoFocus: true,
-              placeholder: 'Choose your country',
+              label: 'Choose your country',
               value: this.state.value,
               onChange: this.handleChange,
             }}
           />
         </div>
+        <div className={styles.fieldWrapper}><TextField fullWidth label="City" /></div>
         <div className={styles.buttonWrapper}>
           <Button raised className={styles.button} color="primary">Submit</Button>
           <Button raised className={styles.button} color="default">Skip</Button>
