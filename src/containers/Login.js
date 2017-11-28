@@ -1,14 +1,14 @@
 import React from 'react'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import Paper from 'material-ui/Paper'
-import PropTypes from 'prop-types'
-import Autosuggest from 'react-autosuggest'
+import Autocomplete from '../components/Autocomplete'
 import TextField from 'material-ui/TextField'
-import { MenuItem } from 'material-ui/Menu'
-import match from 'autosuggest-highlight/match'
-import parse from 'autosuggest-highlight/parse'
 import Button from 'material-ui/Button'
 import { withStyles } from 'material-ui/styles'
 
+import { find } from 'lodash'
+import * as actions from '../actions'
 import countries from '../static/countries.json'
 import styles from './login.scss'
 
@@ -35,101 +35,63 @@ const style = theme => ({
   }
 });
 
-function renderInput(inputProps) {
-  const { classes, autoFocus, value, ref, label, ...other } = inputProps
-
-  return (
-    <TextField
-      fullWidth
-      label={label}
-      autoFocus={autoFocus}
-      value={value}
-      inputRef={ref}
-      InputProps={{
-        ...other,
-      }}
-    />
-  )
-}
-
-function renderSuggestion(suggestion, { query, isHighlighted }) {
-  const matches = match(suggestion.label, query)
-  const parts = parse(suggestion.label, matches)
-
-  return (
-    <MenuItem selected={isHighlighted} component="div">
-      <div>
-        {parts.map((part, index) => {
-          return part.highlight ? (
-            <span key={index} style={{ fontWeight: 300 }}>
-              {part.text}
-            </span>
-          ) : (
-            <strong key={index} style={{ fontWeight: 500 }}>
-              {part.text}
-            </strong>
-          )
-        })}
-      </div>
-    </MenuItem>
-  )
-}
-
-function renderSuggestionsContainer(options) {
-  const { containerProps, children } = options
-
-  return (
-    <Paper {...containerProps} square>
-      {children}
-    </Paper>
-  )
-}
-
-function getSuggestionValue(suggestion) {
-  return suggestion.label
-}
-
-function getSuggestions(value) {
-  const inputValue = value.trim().toLowerCase()
-  const inputLength = inputValue.length
-  let count = 0
-
-  return inputLength <= 2
-    ? []
-    : countries.filter(suggestion => {
-        const keep =
-          count < 5 && suggestion.label.toLowerCase().slice(0, inputLength) === inputValue
-
-        if (keep) {
-          count += 1
-        }
-
-        return keep
-      })
-}
-
 class Login extends React.Component {
   state = {
-    value: '',
-    suggestions: [],
+    country: '',
+    wage: '',
+    city: '',
+    error: {}
   }
 
-  handleSuggestionsFetchRequested = ({ value }) => {
+  constructor () {
+    super()
+
+    this.setCountry = this.setCountry.bind(this)
+    this.setCity = this.setCity.bind(this)
+    this.setWage = this.setWage.bind(this)
+    this.submitEntry = this.submitEntry.bind(this)
+    this.goToMap = this.goToMap.bind(this)
+  }
+
+  setCountry ({ label, value }) {
     this.setState({
-      suggestions: getSuggestions(value),
+      country: value
     })
   }
 
-  handleSuggestionsClearRequested = () => {
+  setCity (event) {
     this.setState({
-      suggestions: [],
+      city: event.target.value
     })
   }
 
-  handleChange = (event, { newValue }) => {
+  setWage (event) {
     this.setState({
-      value: newValue,
+      wage: event.target.value
     })
+  }
+
+  submitEntry () {
+    const { actions } = this.props
+    const { error } = this.state
+
+    error.city = this.state.city.length <= 1 ? true : false
+    error.wage = this.state.wage.length <= 1 ? true : false
+    error.country = !find(countries, { value: this.state.country }) ? true : false
+
+    this.setState({
+      error: error
+    })
+
+    if (!error.city && !error.wage && !error.country) {
+      actions.submitData(this.state)
+    }
+  }
+
+  goToMap () {
+    const { history } = this.props
+
+    history.push('/map')
   }
 
   render () {
@@ -137,38 +99,41 @@ class Login extends React.Component {
 
     return (
       <Paper className={styles.entryWrapper} elevation={2}>
-        <div className={styles.fieldWrapper}><TextField fullWidth label="User" /></div>
         <div className={styles.fieldWrapper}>
-          <Autosuggest
-            theme={{
-              container: classes.container,
-              suggestionsContainerOpen: classes.suggestionsContainerOpen,
-              suggestionsList: classes.suggestionsList,
-              suggestion: classes.suggestion,
-            }}
-            renderInputComponent={renderInput}
-            suggestions={this.state.suggestions}
-            onSuggestionsFetchRequested={this.handleSuggestionsFetchRequested}
-            onSuggestionsClearRequested={this.handleSuggestionsClearRequested}
-            renderSuggestionsContainer={renderSuggestionsContainer}
-            getSuggestionValue={getSuggestionValue}
-            renderSuggestion={renderSuggestion}
-            inputProps={{
-              autoFocus: true,
-              label: 'Choose your country',
-              value: this.state.value,
-              onChange: this.handleChange,
-            }}
-          />
+          <Autocomplete
+            minChars={2}
+            classes={classes}
+            data={countries}
+            label="Choose your country"
+            onChange={this.setCountry}
+            error={this.state.error.country} />
         </div>
-        <div className={styles.fieldWrapper}><TextField fullWidth label="City" /></div>
+        <div className={styles.fieldWrapper}>
+          <TextField fullWidth value={this.state.city} error={this.state.error.city} required onChange={this.setCity} label="City" />
+        </div>
+        <div className={styles.fieldWrapper}>
+          <TextField fullWidth value={this.state.wage} error={this.state.error.wage} required onChange={this.setWage} label="Wage" />
+        </div>
         <div className={styles.buttonWrapper}>
-          <Button raised className={styles.button} color="primary">Submit</Button>
-          <Button raised className={styles.button} color="default">Skip</Button>
+          <Button raised className={styles.button} onClick={this.submitEntry} color="primary">Submit</Button>
+          <Button raised className={styles.button} onClick={this.goToMap} color="default">Skip</Button>
         </div>
       </Paper>
     )
   }
 }
 
-export default withStyles(style)(Login)
+const mapStateToProps = state => {
+  return {
+    ...state
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    actions: bindActionCreators(actions, dispatch)
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(style)(Login))
+

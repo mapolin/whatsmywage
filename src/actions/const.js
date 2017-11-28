@@ -1,0 +1,4 @@
+const GET_DATA = 'GET_DATA'
+const SUBMIT_DATA = 'SUBMIT_DATA'
+
+export { GET_DATA, SUBMIT_DATA }

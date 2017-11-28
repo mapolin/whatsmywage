@@ -3,8 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "config": {
+    "dbPath": "mongodb://localhost/local"
+  },
   "scripts": {
     "start": "neutrino start",
+    "build": "neutrino build",
     "server": "nodemon app.js"
   },
   "author": "Martin Atzinov",

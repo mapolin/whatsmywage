@@ -21,15 +21,17 @@ router.get('/wages/batch', (req, res, next) => {
   res.end('Inserting data...')
 })
 
-router.get('/wages/:country/:city/:wage', (req, res, next) => {
+router.post('/add', (req, res, next) => {
   API.save({
-    country: req.params.country,
-    city: req.params.city,
-    wage: req.params.wage
+    country: req.body.country,
+    city: req.body.city,
+    wage: req.body.wage
   }).then(data => {
-    res.end(data)
+    res.send(data)
+    res.end()
   }).catch(err => {
-    res.end(err)
+    res.send(err)
+    res.end()
   })
 })
 
