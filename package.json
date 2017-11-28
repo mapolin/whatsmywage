@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "config": {
-    "dbPath": "mongodb://localhost/local"
+    "dbPath": {
+      "production": "mongodb://mapolin:334ef80a@ds117956.mlab.com:17956/whatsmywage",
+      "development": "mongodb://localhost/local"
+    }
   },
   "scripts": {
     "start": "neutrino start",
