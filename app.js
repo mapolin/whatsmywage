@@ -4,6 +4,8 @@ var favicon = require('serve-favicon')
 var logger = require('morgan')
 var cookieParser = require('cookie-parser')
 var bodyParser = require('body-parser')
+var env = process.env.NODE_ENV || 'production'
+var port = process.env.PORT || 3000
 
 var index = require('./routes/index')
 var data = require('./routes/data')
@@ -49,4 +51,4 @@ app.use(function(err, req, res, next) {
   res.render('error')
 })
 
-app.listen(3000)
+app.listen(port)
