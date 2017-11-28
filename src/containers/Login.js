@@ -6,6 +6,7 @@ import Autocomplete from '../components/Autocomplete'
 import TextField from 'material-ui/TextField'
 import Button from 'material-ui/Button'
 import { withStyles } from 'material-ui/styles'
+import { capitalize } from 'lodash'
 
 import { find } from 'lodash'
 import * as actions from '../actions'
@@ -60,8 +61,9 @@ class Login extends React.Component {
   }
 
   setCity (event) {
+    let val = capitalize(event.target.value)
     this.setState({
-      city: event.target.value
+      city: val
     })
   }
 

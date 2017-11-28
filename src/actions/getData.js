@@ -3,7 +3,7 @@ import { GET_DATA } from './const'
 
 function action () {
   return dispatch => {
-    return fetch(`/data/wages/base`, {
+    return fetch(`${config.API}/data/wages/base`, {
         mode: 'cors'
       })
       .then(result => result.json())
